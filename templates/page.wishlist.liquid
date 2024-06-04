@@ -1,0 +1,64 @@
+<style>
+  .image{
+     width : 150px;
+  height : 200px;
+  }
+</style>
+  
+
+<h1>Your Wishlist</h1>
+<div id="wishlist-items">
+ 
+</div>
+
+ 
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const wishlistContainer = document.getElementById('wishlist-items');
+
+    if (wishlist.length === 0) {
+      wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
+    } else {
+      wishlist.forEach(productId => {
+        console.log(productId);
+        fetch(`/products/${productId}.js`)
+          .then(response => response.json())
+          .then(product => {
+            var pro=`<h2>${product.title}</h2>
+               <img class= "image" src="${product.images[0]}" />
+                      <h3>${product.url}</h3
+                      <h4>${product.price}</h4>`;
+               wishlistContainer.innerHTML += pro;
+          });
+      });
+  }    
+  
+    // document.body.addEventListener('click', function(event) {
+    //   if (event.target.classList.contains('remove-wishlist-button')) {
+    //     updateWishlist(productId, 'remove');
+    //     event.target.parentElement.remove();
+    //     alert('Removed from Wishlist!');
+    //   }
+    // });
+
+      document.querySelectorAll('remove-wishlist-button').forEach((button)=>{
+        button.addEventListener('click',()=>{
+          updateWishlist(productId, 'remove');
+          alert('Removed from Wishlist!');
+          console.log("aagaya");
+        })
+      })
+
+    function updateWishlist(productId, action) {
+      let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+      if (action === 'remove') {
+        wishlist = wishlist.filter(id => id !== productId);
+      }
+
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    }
+  });
+</script>

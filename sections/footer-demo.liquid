@@ -1,0 +1,200 @@
+{{ 'style.liquid.css' | asset_url |  stylesheet_tag}}
+
+
+{% comment %} main footer div having heading nd subheading {% endcomment %}
+<footer class="footer">
+
+{% comment %} heading {% endcomment %}
+{% if section.settings.text-heading != blank %}
+<div class="text_alignment">
+  <h1>{{ section.settings.text-heading }}</h1>
+</div>
+{% endif %}
+
+  
+{% comment %} subheading {% endcomment %}
+{% if section.settings.text-subheading!= blank %}
+<div class="text_alignment">
+  <h1>{{ section.settings.text-subheading }}</h1>
+</div>
+{% endif %}
+  
+
+  {% comment %} one more div inside footer div {% endcomment %}
+  <div class="width">
+
+
+  {% comment %} previous div divided into 2 parts = top an bottom {% endcomment %}
+  <div class="footer-top">
+    
+ {% for block in section.blocks %}
+  {% if block.type == 'navigation' %}
+   <div class="footer-column">
+     
+    
+    
+   <h2 class="accordion-toggle"> {{ block.settings.linklist.title }}  </h2> 
+  
+     <div class="dropdown-content">
+     {%  for link in block.settings.linklist.links %}
+       
+         <li>
+           <a href="{{ link.url }}">{{ link.title }}</a>
+         </li>
+ 
+       {% endfor %}
+       </div>
+     </div>
+ 
+    {% endif %}
+  {% endfor %}
+</div>
+    
+
+ 
+
+
+    
+{% comment %} same div used for responsive design {% endcomment %}
+  <div class="media">
+     {% for block in section.blocks %}
+  {% if block.type == 'navigation' %}
+   <div class="footer-column">
+   
+   <h2 > {{ block.settings.linklist.title }}  </h2> 
+     {%  for link in block.settings.linklist.links %}
+   <div class="acc">
+  <ul>
+      <li>
+           <a href="{{ link.url }}">{{ link.title }}</a>
+         </li>
+</ul>
+   </div>
+       {% endfor %}
+     </div>
+
+    {% endif %}
+  {% endfor %}
+  </div>
+
+    {% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+
+  function closeAllDropdowns(currentDropdown) {
+    document.querySelectorAll('.dropdown-content').forEach(function(dropdown) {
+      if (dropdown !== currentDropdown) {
+        dropdown.style.display = 'none';
+      }
+    });
+  }
+
+  document.querySelectorAll('.footer-column .accordion-toggle').forEach(function(dropdownToggle) {
+    dropdownToggle.addEventListener('click', function(event) {
+      var dropdownContent = this.nextElementSibling;
+      var isCurrentlyOpen = dropdownContent.style.display === 'block';
+
+      // Close all dropdowns first
+      closeAllDropdowns(dropdownContent);
+
+      // Toggle the current dropdown
+      dropdownContent.style.display = isCurrentlyOpen ? 'none' : 'block';
+    });
+  });
+
+  // Event listener to close dropdowns when clicking outside of them
+  window.addEventListener('click', function(event) {
+    if (!event.target.matches('.footer-column .accordion-toggle')) {
+      closeAllDropdowns(null);
+    }
+  });
+});
+
+
+{% endjavascript %}
+
+
+   {% comment %} this div for payment and social icons {% endcomment %}
+ <div class="footer-bottom">
+
+ {%- liquid
+assign social_icons = true
+if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_youtube_link == blank and settings.social_tiktok_link == blank and settings.social_twitter_link == blank and settings.social_pinterest_link == blank and settings.social_snapchat_link == blank and settings.social_tumblr_link == blank and settings.social_vimeo_link == blank
+    assign social_icons = false
+endif
+-%}
+
+{%- if section.settings.show_social and social_icons -%}
+<div class="icon_alignment">
+  {%- render 'social-icons', class: 'footer__list-social' -%}
+</div>
+{%- endif -%}
+
+{%- if section.settings.payment_enable -%}
+<div class="icon_alignment">
+  <ul class="list list-payment" role="list">
+    {%- for type in shop.enabled_payment_types -%}
+      <li class="list-payment__item">
+        {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{%- endif -%}
+  </div>
+  
+</div>
+  </footer>
+  
+{{ section.settings.linklist }}
+
+
+
+{% schema %}
+  {
+    "name": "footer",
+    "blocks": [
+      {
+        "name" : "navigation column",
+        "type": "navigation",
+         "settings": [
+           {
+             "type": "link_list",
+             "id" : "linklist",
+             "label" : "Navigation menu"
+           }
+         ]
+      }
+    ],
+    "settings" :[
+     {
+      "type": "text",
+      "id": "text-heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "text-subheading",
+      "label": "Sub-Heading"
+    },
+       {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": true,
+      "label": "Social Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "payment_enable",
+      "default": true,
+      "label": "t:sections.footer.settings.payment_enable.label"
+    }
+    
+    ],
+     "presets": [
+    {
+      "name": "footer-demo"
+    }
+  ]
+   
+  }
+{% endschema %}

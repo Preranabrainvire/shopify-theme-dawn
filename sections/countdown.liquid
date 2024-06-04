@@ -1,0 +1,101 @@
+<div class="countdown-timer-section">
+  <div id="countdown">
+    <span id="days"></span>d 
+    <span id="hours"></span>h 
+    <span id="minutes"></span>m 
+    <span id="seconds"></span>s 
+  </div>
+</div>
+
+<style>
+  .countdown-timer-section {
+    text-align: center;
+    font-size: 2rem;
+    margin: 20px 0;
+  }
+  #countdown {
+    display: inline-block;
+    padding: 10px;
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  #countdown span {
+    margin: 0 5px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the countdown values from the section settings
+    var days = {{ section.settings.days }};
+    var hours = {{ section.settings.hours }};
+    var minutes = {{ section.settings.minutes }};
+    var seconds = {{ section.settings.seconds }};
+    
+    // Calculate the total countdown duration in seconds
+    var countdownDuration = (days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds;
+    var countDownDate = new Date().getTime() + countdownDuration * 1000;
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+      // Get today's date and time
+      var now = new Date().getTime();
+        
+      // Find the distance between now and the count down date
+      var distance = countDownDate - now;
+        
+      // Time calculations for days, hours, minutes and seconds
+      var d = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var s = Math.floor((distance % (1000 * 60)) / 1000);
+        
+      // Output the result in an element with id="countdown"
+      document.getElementById("days").innerHTML = d;
+      document.getElementById("hours").innerHTML = h;
+      document.getElementById("minutes").innerHTML = m;
+      document.getElementById("seconds").innerHTML = s;
+        
+      // If the count down is over, reset or hide the countdown
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdown").style.display = 'none'; // Hide the countdown
+        // Or reset the countdown
+        // countDownDate = new Date().getTime() + countdownDuration * 1000;
+      }
+    }, 1000);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Countdown Timer",
+  "settings": [
+    {
+      "type": "number",
+      "id": "days",
+      "label": "Days",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "hours",
+      "label": "Hours",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "minutes",
+      "label": "Minutes",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "seconds",
+      "label": "Seconds",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

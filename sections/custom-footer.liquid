@@ -1,0 +1,135 @@
+{{ 'section-footer.css' | asset_url | stylesheet_tag }}
+{{ 'component-newsletter.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-menu.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-payment.css' | asset_url | stylesheet_tag }}
+{{ 'component-list-social.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+.icon_alignment{
+  text-align:center;
+  display: flex;
+  justify-content: center;
+}
+.text_alignment{
+  text-align:center;
+}
+{%- endstyle -%}
+
+{% if section.settings.footer_linklist_title != blank %}
+<div class="text_alignment">
+  <h1>{{ section.settings.footer_linklist_title }}</h1>
+</div>
+{% endif %}
+
+{% if section.settings.footer_linklist_sub_title != blank %}
+<div class="text_alignment">
+  <h1>{{ section.settings.footer_linklist_sub_title }}</h1>
+</div>
+{% endif %}
+
+{{ section.settings.heading }}
+{{ section.settings.menu }}
+
+{%- liquid
+assign social_icons = true
+if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_youtube_link == blank and settings.social_tiktok_link == blank and settings.social_twitter_link == blank and settings.social_pinterest_link == blank and settings.social_snapchat_link == blank and settings.social_tumblr_link == blank and settings.social_vimeo_link == blank
+    assign social_icons = false
+endif
+-%}
+
+{%- if section.settings.show_social and social_icons -%}
+<div class="icon_alignment">
+  {%- render 'social-icons', class: 'footer__list-social' -%}
+</div>
+{%- endif -%}
+
+{%- if section.settings.payment_enable -%}
+<div class="icon_alignment">
+  <ul class="list list-payment" role="list">
+    {%- for type in shop.enabled_payment_types -%}
+      <li class="list-payment__item">
+        {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{%- endif -%}
+
+{%- if block.settings.heading != blank -%}
+<h2 class="footer-block__heading inline-richtext">{{- block.settings.heading -}}</h2>
+{%- endif -%}
+
+{%- case block.type -%}
+  {%- when 'text' -%}
+    <div class="footer-block__details-content rte">
+      {{ block.settings.heading }}
+    </div>
+  {%- when 'link_list' -%}
+    {%- if block.settings.footer-menu != blank -%}
+      <ul class="footer-block__details-content list-unstyled">
+        {%- for link in block.settings.menu.links -%}
+          <li>
+            <a href="{{ link.url }}" class="link link--text list-menu__item list-menu__item--link{% if link.active %} list-menu__item--active{% endif %}">
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+{%- endcase -%}
+
+{% schema %}
+{
+  "name": "Custom Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "footer_linklist_title",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "footer_linklist_sub_title",
+      "label": "Sub-Heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": true,
+      "label": "Social Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "payment_enable",
+      "default": true,
+      "label": "t:sections.footer.settings.payment_enable.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "navigation",
+      "name": "Navigation column",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading-link"
+        },
+        {
+          "type": "link_list",
+          "id": "linklist",
+          "label": " Navigation menu "
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom-Footer"
+    }
+  ]
+}
+{% endschema %}

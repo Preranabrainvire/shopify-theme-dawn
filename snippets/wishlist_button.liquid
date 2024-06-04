@@ -1,0 +1,35 @@
+
+<style>
+.wishlist-button  {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.wishlist-product {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.wishlist-product img {
+  max-width: 50px;
+  margin-right: 20px;
+  width : 50px;
+  height : 50px;
+}
+
+
+</style>
+
+<div class="wishlist-product">
+
+  <button class="wishlist-button" data-product-id="{{ product.handle  }}">Add to wishlist</button>
+   <button class="remove-wishlist-button" data-product-id="{{ product.handle  }}">Remove</button>
+ 
+</div>
+
